@@ -14,5 +14,28 @@ namespace CatsAPI.Data
 
         }
         public DbSet<MyCat> MyCats { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<MyCat>().HasData(
+                new MyCat
+                {
+                    Id = 1,
+                    Name = "Penny",
+                    Type = "Torbie",
+                    Age = 7,
+                    Weight = 8.5
+                },
+
+                new MyCat
+                {
+                    Id = 2,
+                    Name = "Louise",
+                    Type = "Potato",
+                    Age = 2,
+                    Weight = 16.0
+                }
+            );
+        }
     }
 }

@@ -28,7 +28,7 @@ namespace CatsAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
+            services.AddMvc().AddXmlSerializerFormatters();
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
@@ -38,7 +38,7 @@ namespace CatsAPI
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ApiDbContext dbContext)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -57,8 +57,6 @@ namespace CatsAPI
             {
                 endpoints.MapControllers();
             });
-
-            dbContext.Database.EnsureCreated();
         }
     }
 }
