@@ -1,10 +1,12 @@
-﻿using CatsAPI.Models;
-using Microsoft.AspNetCore.Http;
+﻿using CatsAPI.Data;
+using CatsAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
+// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace CatsAPI.Controllers
 {
@@ -12,36 +14,54 @@ namespace CatsAPI.Controllers
     [ApiController]
     public class MyCatsController : ControllerBase
     {
-        private static List<MyCat> myCats = new List<MyCat>
+        private ApiDbContext _dbContext;
+        public MyCatsController(ApiDbContext dbContext)
         {
-            new MyCat {Name = "Penny", Type = "Torbie", Age = 7, Weight = 8.5},
-            new MyCat {Name = "Louise", Type = "Potato", Age = 2, Weight = 16.0}
-        };
+            _dbContext = dbContext;
+        }
 
+        // GET: api/<MyCatsController>
         [HttpGet]
         public IEnumerable<MyCat> Get()
         {
-            return myCats;
+            return _dbContext.MyCats;
         }
 
+        // GET api/<MyCatsController>/5
+        [HttpGet("{id}")]
+        public MyCat Get(int id)
+        {
+            var foundCat = _dbContext.MyCats.Find(id);
+            return foundCat;
+        }
+
+        // POST api/<MyCatsController>
         [HttpPost]
-        public void Post([FromBody]MyCat newCat)
+        public void Post([FromBody] MyCat newCat)
         {
-            myCats.Add(newCat);
+            _dbContext.MyCats.Add(newCat);
+            _dbContext.SaveChanges();
         }
 
-        [HttpPut("{name}")]
-        public void Put(string name, [FromBody]MyCat cat)
+        // PUT api/<MyCatsController>/5
+        [HttpPut("{id}")]
+        public void Put(int id, [FromBody] MyCat catObj)
         {
-            int namedCatIndex = myCats.IndexOf(myCats.Where(i => i.Name == name).FirstOrDefault());
-            myCats[namedCatIndex] = cat;
+            var foundCat = _dbContext.MyCats.Find(id);
+            foundCat.Name = catObj.Name;
+            foundCat.Type = catObj.Type;
+            foundCat.Age = catObj.Age;
+            foundCat.Weight = catObj.Weight;
+            _dbContext.SaveChanges();
         }
 
-        [HttpDelete("{name}")]
-        public void Delete(string name)
+        // DELETE api/<MyCatsController>/5
+        [HttpDelete("{id}")]
+        public void Delete(int id)
         {
-            int namedCatIndex = myCats.IndexOf(myCats.Where(i => i.Name == name).FirstOrDefault());
-            myCats.RemoveAt(namedCatIndex);
+            var foundCat = _dbContext.MyCats.Find(id);
+            _dbContext.MyCats.Remove(foundCat);
+            _dbContext.SaveChanges();
         }
     }
 }
