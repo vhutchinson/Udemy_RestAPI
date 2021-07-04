@@ -1,7 +1,9 @@
+using CatsAPI.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -32,10 +34,11 @@ namespace CatsAPI
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "CatsAPI", Version = "v1" });
             });
+            services.AddDbContext<ApiDbContext>(option => option.UseSqlServer(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=CatsDb;"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ApiDbContext dbContext)
         {
             if (env.IsDevelopment())
             {
@@ -54,6 +57,8 @@ namespace CatsAPI
             {
                 endpoints.MapControllers();
             });
+
+            dbContext.Database.EnsureCreated();
         }
     }
 }
