@@ -2,6 +2,7 @@
 using CatsAPI.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,19 +24,19 @@ namespace CatsAPI.Controllers
 
         // GET: api/<MyCatsController>
         [HttpGet]
-        public IActionResult Get()
+        public async Task<IActionResult> Get()
         {
-            if (_dbContext.MyCats.Any())
-                return Ok(_dbContext.MyCats);
+            if (await _dbContext.MyCats.ToListAsync() is not null)
+                return Ok(await _dbContext.MyCats.ToListAsync());
             else
                 return NoContent();
         }
 
         // GET api/<MyCatsController>/5
         [HttpGet("{id}")]
-        public IActionResult Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
-            var foundCat = _dbContext.MyCats.Find(id);
+            var foundCat = await _dbContext.MyCats.FindAsync(id);
             if (foundCat is null)
                 return NotFound("This specific cat could not be found, try looking for another one.");
             else
@@ -44,18 +45,18 @@ namespace CatsAPI.Controllers
 
         // POST api/<MyCatsController>
         [HttpPost]
-        public IActionResult Post([FromBody] MyCat newCat)
+        public async Task<IActionResult> Post([FromBody] MyCat newCat)
         {
-            _dbContext.MyCats.Add(newCat);
-            _dbContext.SaveChanges();
+            await _dbContext.MyCats.AddAsync(newCat);
+            await _dbContext.SaveChangesAsync();
             return StatusCode(StatusCodes.Status201Created);
         }
 
         // PUT api/<MyCatsController>/5
         [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody] MyCat catObj)
+        public async Task<IActionResult> Put(int id, [FromBody] MyCat catObj)
         {
-            var foundCat = _dbContext.MyCats.Find(id);
+            var foundCat = await _dbContext.MyCats.FindAsync(id);
             if(foundCat is null)
             {
                 return NotFound("This specific cat could not be found, try looking for another one.");
@@ -66,16 +67,16 @@ namespace CatsAPI.Controllers
                 foundCat.Type = catObj.Type;
                 foundCat.Age = catObj.Age;
                 foundCat.Weight = catObj.Weight;
-                _dbContext.SaveChanges();
+                await _dbContext.SaveChangesAsync();
                 return Ok("Cat updated successfully.");
             }
         }
 
         // DELETE api/<MyCatsController>/5
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var foundCat = _dbContext.MyCats.Find(id);
+            var foundCat = await _dbContext.MyCats.FindAsync(id);
             if(foundCat is null)
             {
                 return NotFound("Could not find the cat to delete. Why are you trying to delete a cat anyway?");
@@ -83,7 +84,7 @@ namespace CatsAPI.Controllers
             else
             {
                 _dbContext.MyCats.Remove(foundCat);
-                _dbContext.SaveChanges();
+                await _dbContext.SaveChangesAsync();
                 return Ok("Cat record deleted.");
             }
         }
