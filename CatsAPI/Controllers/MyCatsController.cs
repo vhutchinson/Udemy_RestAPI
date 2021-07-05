@@ -46,6 +46,17 @@ namespace CatsAPI.Controllers
                 return Ok(foundCat);
         }
 
+        // GET api/<MyCatsController>/name/Penny
+        [HttpGet("[action]/{name}")]
+        public async Task<IActionResult> GetByName(string name)
+        {
+            var foundCat = await _dbContext.MyCats.SingleAsync(x => x.Name == name);
+            if (foundCat is null)
+                return NotFound("This specific cat could not be found, try looking for another one.");
+            else
+                return Ok(foundCat);
+        }
+
         // POST api/<MyCatsController>
         [HttpPost]
         public async Task<IActionResult> Post([FromForm] MyCat newCat)
