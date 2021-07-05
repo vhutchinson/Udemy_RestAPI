@@ -1,5 +1,6 @@
 ﻿using Azure.Storage.Blobs;
 using CatsAPI.Data;
+using CatsAPI.Helpers;
 using CatsAPI.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -49,18 +50,8 @@ namespace CatsAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromForm] MyCat newCat)
         {
-            // Get BobClient and upload image
-            string connection = @"DefaultEndpointsProtocol=https;AccountName=catstorageaccount;AccountKey=WHaAnrsZ2EA38R4r/IHRRZZ4EvD8b3bjis5vQI1VnOT/66XOBqkbW33VpMaqh4BNcIv+OfdsXKlqev9Rnswwwg==;EndpointSuffix=core.windows.net";
-            string containerName = "mycatssleeping";
-            BlobContainerClient blobContainerClient = new BlobContainerClient(connection, containerName);
-            BlobClient blobClient = blobContainerClient.GetBlobClient(newCat.Image.FileName);
-            var memoryStream = new MemoryStream();
-            await newCat.Image.CopyToAsync(memoryStream);
-            memoryStream.Position = 0;
-            await blobClient.UploadAsync(memoryStream);
-
-            // Assign image URL to new cat
-            newCat.ImageUrl = blobClient.Uri.AbsoluteUri;
+            // Upload image and assign image URL to new cat
+            newCat.ImageUrl = await FileHelper.UploadImage(newCat.Image);
 
             // Add new MyCat object to database
             await _dbContext.MyCats.AddAsync(newCat);
