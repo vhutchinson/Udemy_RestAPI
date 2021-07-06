@@ -13,12 +13,12 @@ namespace CatsAPI.Data
         {
 
         }
-        public DbSet<MyCat> MyCats { get; set; }
+        public DbSet<Cat> MyCats { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<MyCat>().HasData(
-                new MyCat
+            modelBuilder.Entity<Cat>().HasData(
+                new Cat
                 {
                     Id = 1,
                     Name = "Penny",
@@ -27,7 +27,7 @@ namespace CatsAPI.Data
                     Weight = 8.5
                 },
 
-                new MyCat
+                new Cat
                 {
                     Id = 2,
                     Name = "Louise",

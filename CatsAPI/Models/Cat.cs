@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace CatsAPI.Models
 {
-    public class MyCat
+    public class Cat
     {
         public int Id { get; set; }
 
@@ -28,5 +28,9 @@ namespace CatsAPI.Models
         public IFormFile Image { get; set; }
 
         public string ImageUrl { get; set; }
+
+        public int CatOwnerId { get; set; }
+
+        public ICollection<FavoriteMovie> FavoriteMovies { get; set; }
     }
 }

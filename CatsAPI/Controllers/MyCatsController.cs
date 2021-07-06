@@ -59,7 +59,7 @@ namespace CatsAPI.Controllers
 
         // POST api/<MyCatsController>
         [HttpPost]
-        public async Task<IActionResult> Post([FromForm] MyCat newCat)
+        public async Task<IActionResult> Post([FromForm] Cat newCat)
         {
             // Upload image and assign image URL to new cat
             newCat.ImageUrl = await FileHelper.UploadImage(newCat.Image);
@@ -73,7 +73,7 @@ namespace CatsAPI.Controllers
 
         // PUT api/<MyCatsController>/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] MyCat catObj)
+        public async Task<IActionResult> Put(int id, [FromBody] Cat catObj)
         {
             var foundCat = await _dbContext.MyCats.FindAsync(id);
             if(foundCat is null)
